@@ -1,0 +1,19 @@
+{
+  "name": "the-crossword-thing",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TheCrosswordThing — live classroom crossword race timer and leaderboard",
+  "scripts": {
+    "start": "node server/index.js",
+    "go": "npm install && node server/index.js"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.34.3",
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4"
+  }
+}
