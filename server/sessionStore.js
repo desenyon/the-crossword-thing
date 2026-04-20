@@ -11,10 +11,27 @@ const chains = new Map();
 /** @type {Promise<import('@upstash/redis').Redis> | null} */
 let redisPromise = null;
 
+/**
+ * Vercel integrations may use default Upstash names, legacy KV_*, or a custom prefix
+ * (e.g. STORAGE_*) from the "Install Integration" dialog.
+ */
 function redisEnv() {
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  return url && token ? { url, token } : null;
+  /** @type {[string, string][]} */
+  const pairs = [
+    ["UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN"],
+    ["KV_REST_API_URL", "KV_REST_API_TOKEN"],
+    ["STORAGE_KV_REST_API_URL", "STORAGE_KV_REST_API_TOKEN"],
+    ["STORAGE_REDIS_REST_API_URL", "STORAGE_REDIS_REST_API_TOKEN"],
+    ["STORAGE_URL", "STORAGE_TOKEN"],
+  ];
+  for (const [urlKey, tokenKey] of pairs) {
+    const url = process.env[urlKey];
+    const token = process.env[tokenKey];
+    if (url && token) {
+      return { url, token };
+    }
+  }
+  return null;
 }
 
 export function usesPersistentStore() {
